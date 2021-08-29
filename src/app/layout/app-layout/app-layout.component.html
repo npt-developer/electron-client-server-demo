@@ -1,0 +1,51 @@
+<nz-layout *ngIf="{
+  isCollapsed: isCollapsed$ | async,
+  isPrinter: isPrinter$ | async
+} as layoutConfig"
+>
+<nz-sider 
+  class="menu-sidebar"
+  [nzBreakpoint]="'sm'"
+  [class.dont-print]="layoutConfig.isPrinter"
+  nzWidth="256px"
+  [(nzCollapsed)]="layoutConfig.isCollapsed"
+>
+  <div class="sidebar-logo">
+    <a routerLink="/">
+      <img src="favicon.ico" alt="logo">
+      <h1>App</h1>
+    </a>
+  </div>
+  <app-app-layout-sidenav-menu [menus]="menus" [isCollapsed]="layoutConfig.isCollapsed"></app-app-layout-sidenav-menu>
+</nz-sider>
+<nz-layout>
+  <nz-header [class.dont-print]="layoutConfig.isPrinter">
+    <div fxLayout="row" class="app-header">
+      <div fxFlex fxLayout="column">
+        <span class="header-trigger" (click)="onToggleCollapsedSideNav()">
+          <i class="trigger"
+            nz-icon
+            [nzType]="'menu-unfold'"
+          ></i>
+        </span>
+      </div>
+    </div>
+  </nz-header>
+  <nz-content [class.nz-content]="!layoutConfig.isPrinter">
+    <nz-breadcrumb [class.dont-print]="layoutConfig.isPrinter">
+      <nz-breadcrumb-item>
+        <a routerLink="/"><i nz-icon nzType="home"></i>Trang chủ</a>
+      </nz-breadcrumb-item>
+      <ng-container *ngIf="breadcrumbs$ | async as breadcrumbs">
+        <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs">
+          <a [routerLink]="breadcrumb.link">{{ breadcrumb.title }}</a>
+        </nz-breadcrumb-item>
+      </ng-container>
+    </nz-breadcrumb>
+    <div class="inner-content" [class.inner-content-padding]="!layoutConfig.isPrinter">
+      <router-outlet></router-outlet>
+    </div>
+  </nz-content>
+  <nz-footer [class.dont-print]="layoutConfig.isPrinter">Copyright © 2020 NPT</nz-footer>
+</nz-layout>
+</nz-layout>

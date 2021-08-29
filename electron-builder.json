@@ -1,0 +1,31 @@
+{
+  "appId": "com.nptdev.app",
+  "productName": "App",
+  "artifactName": "${productName}.${ext}",
+  "directories": {
+    "output": "release-builds"
+  },
+  "files": [
+    "**/*",
+    "!*.ts",
+    "!**/*.ts",
+    "!*.code-workspace",
+    "!*.md",
+    "!*.json",
+    "!src/",
+    "!e2e/",
+    "!hooks/",
+    "!.editorconfig",
+    "!db/",
+    "!.firebase/",
+    "!.firebaserc",
+    "!_config.yml",
+    "!karma.conf.js"
+  ],
+  "win": {
+    "icon": "dist/app/assets/desktop-icons",
+    "target": [
+      "portable"
+    ]
+  }
+}
