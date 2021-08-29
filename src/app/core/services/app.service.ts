@@ -7,7 +7,6 @@ import { Title } from '@angular/platform-browser';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { IAppRouterData } from 'src/app/common/router/app-router-data.interface';
-import { DbService } from './db.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,13 +23,12 @@ export class AppService {
     private _title: Title,
     private _router: Router,
     private _activedRoute: ActivatedRoute,
-    private _dbService: DbService,
   ) { 
     this.initRouterEnd();
   }
 
   onAppClose() {
-    this._dbService.closeConnection();
+    
   }
 
   updatePrinter(print: boolean) {

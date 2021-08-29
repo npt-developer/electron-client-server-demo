@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NzIconService } from 'ng-zorro-antd/icon';
 import { environment } from 'src/environments/environment';
-import { DbService } from './db.service';
 import { ElectronService } from './electron.service';
 
 @Injectable()
@@ -9,7 +8,6 @@ export class AppInitService {
 
   constructor(
     private _iconService: NzIconService,
-    private _dbService: DbService,
     private _electronService: ElectronService,
   ) {
   }
@@ -26,9 +24,6 @@ export class AppInitService {
       // Change ng zorro icon asset source to /assets/icons
       this.nzIconChangeAssetsSource();
       
-      // open db connection
-      this._dbService.openConnection();
-
       resolve();
     });
   }
