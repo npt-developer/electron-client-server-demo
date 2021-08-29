@@ -1,12 +1,35 @@
-import { app, BrowserWindow, screen, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, ipcMain, Menu, Tray } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import ENV_CONFIG from './env.config';
 
 let win: BrowserWindow = null;
 let isAppClose: boolean = false;
+// 
+let isForceQuit: boolean = false;
 
 function createWindow(): BrowserWindow {
+
+  const tray: Tray = new Tray(path.join(__dirname, 'favicon.ico'));
+
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+      label: 'Show App', click: function () {
+        win.show();
+      }
+    },
+    {
+      label: 'Quit', click: function () {
+        isForceQuit = true;
+        app.quit();
+      }
+    }
+  ]));
+
+  tray.on('click', function(e) {
+    win.show();
+  });
+
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
 
@@ -14,6 +37,7 @@ function createWindow(): BrowserWindow {
   win = new BrowserWindow({
     x: 0,
     y: 0,
+    // show: false,
     width: size.width,
     height: size.height,
     webPreferences: {
@@ -45,18 +69,44 @@ function createWindow(): BrowserWindow {
     win.webContents.openDevTools();
   }
 
-  // Emitted when the window is closed.
-  // https://stackoverflow.com/a/58367453
-  win.on('close', (e: Event) => {
-    // Dereference the window object, usually you would store window
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    if (!isAppClose) {
-      if (win) {
-        e.preventDefault();
-        win.webContents.send('app:close');
+  win.on('minimize',function(event){
+    event.preventDefault();
+    win.hide();
+  });
+
+  win.on('close', function(e: Event){
+    if(!isForceQuit){
+      e.preventDefault();
+      win.hide();
+    } else {
+      // Emitted when the window is closed.
+      // https://stackoverflow.com/a/58367453
+      // Dereference the window object, usually you would store window
+      // in an array if your app supports multi windows, this is the time
+      // when you should delete the corresponding element.
+      if (!isAppClose) {
+        if (win) {
+          e.preventDefault();
+          win.webContents.send('app:close');
+        }
       }
     }
+    return false;
+  });
+
+  // You can use 'before-quit' instead of (or with) the close event
+  app.on('before-quit', function (e) {
+    // Handle menu-item or keyboard shortcut quit here
+    if(!isForceQuit){
+      e.preventDefault();
+      win.hide();
+    }
+  });
+
+  win.on('closed', function(){
+    console.log("closed");
+    win = null;
+    app.quit();
   });
 
   return win;
